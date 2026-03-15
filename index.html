@@ -50,18 +50,36 @@ header h1 span{color:var(--accent2);}
 .add-btn:hover{background:#245a40;}
 
 .task-list{display:flex;flex-direction:column;gap:7px;}
-.task-card{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:flex-start;gap:11px;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03);}
+.task-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:11px;
+  padding:12px 14px;display:flex;align-items:flex-start;gap:11px;
+  transition:all 0.35s ease;box-shadow:0 1px 4px rgba(0,0,0,0.03);
+  border-left:4px solid var(--border);
+}
 .task-card:hover{box-shadow:0 4px 14px rgba(0,0,0,0.07);}
-.task-card.done{opacity:0.5;}
-.task-card.done .task-title{text-decoration:line-through;}
-.task-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
-.task-checkbox.checked{background:var(--accent);border-color:var(--accent);color:white;}
+.task-card.done{
+  background:linear-gradient(90deg,#f0fdf4,#f7fef9);
+  border-color:#b7e5c8;
+  border-left:4px solid var(--accent);
+  opacity:0.85;
+  box-shadow:0 0 0 0 rgba(45,106,79,0);
+  animation:doneGlow 0.5s ease;
+}
+@keyframes doneGlow{
+  0%{box-shadow:0 0 0 0 rgba(45,106,79,0.3);transform:scale(1.01);}
+  60%{box-shadow:0 0 12px 4px rgba(45,106,79,0.12);}
+  100%{box-shadow:0 0 0 0 rgba(45,106,79,0);transform:scale(1);}
+}
+.task-card.done .task-title{color:#2d6a4f;font-weight:600;}
+.task-card.done .task-notes{color:#52936e;}
+.task-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.25s;margin-top:1px;}
+.task-checkbox.checked{background:var(--accent);border-color:var(--accent);color:white;transform:scale(1.1);}
 .task-checkbox.checked::after{content:'✓';font-size:11px;font-weight:700;}
 .task-body{flex:1;}
 .task-meta{display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap;}
 .subject-tag{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:2px 7px;border-radius:4px;color:white;}
-.task-title{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.3;}
-.task-notes{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.task-title{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.3;transition:color 0.3s;}
+.task-notes{font-size:11.5px;color:var(--text-muted);margin-top:2px;transition:color 0.3s;}
 .task-time-slot{font-size:11px;color:var(--text-muted);font-weight:500;}
 .task-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:2px 4px;border-radius:4px;transition:all 0.15s;flex-shrink:0;}
 .task-del:hover{background:#fee2e2;color:#c0392b;}
@@ -133,13 +151,27 @@ header h1 span{color:var(--accent2);}
 .topic-section{margin-bottom:16px;}
 .topic-section:last-child{margin-bottom:0;}
 .topic-sec-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
-.topic-item{display:flex;align-items:flex-start;gap:10px;padding:7px 6px;border-radius:7px;cursor:pointer;transition:background 0.15s;}
+.topic-item{
+  display:flex;align-items:flex-start;gap:10px;padding:7px 6px;
+  border-radius:7px;cursor:pointer;
+  transition:all 0.35s ease;
+  border-left:3px solid transparent;
+}
 .topic-item:hover{background:var(--surface2);}
-.topic-item.done .topic-text{text-decoration:line-through;color:var(--text-muted);}
-.topic-cb{width:17px;height:17px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
-.topic-item.done .topic-cb{background:var(--accent);border-color:var(--accent);color:white;}
+.topic-item.done{
+  background:linear-gradient(90deg,#f0fdf4,#f7fef9);
+  border-left:3px solid var(--accent);
+  animation:topicDone 0.45s ease;
+}
+@keyframes topicDone{
+  0%{background:#d1fae5;transform:translateX(2px);}
+  100%{background:linear-gradient(90deg,#f0fdf4,#f7fef9);transform:translateX(0);}
+}
+.topic-item.done .topic-text{color:#2d6a4f;font-weight:600;}
+.topic-cb{width:17px;height:17px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.25s;margin-top:1px;}
+.topic-item.done .topic-cb{background:var(--accent);border-color:var(--accent);color:white;transform:scale(1.1);}
 .topic-item.done .topic-cb::after{content:'✓';font-size:10px;font-weight:700;}
-.topic-text{font-size:13px;color:var(--text);line-height:1.4;}
+.topic-text{font-size:13px;color:var(--text);line-height:1.4;transition:color 0.3s;}
 
 /* colors */
 .qm{background:var(--qm);} .ed{background:var(--ed);} .sm{background:var(--sm);} .mp{background:var(--mp);} .mt{background:var(--mt);}
@@ -183,7 +215,130 @@ header h1 span{color:var(--accent2);}
 .tip-row:last-child{border-bottom:none;}
 .tip-icon{flex-shrink:0;}
 
-@media(max-width:500px){.page{padding:14px;}.form-row{flex-direction:column;}.progress-grid{grid-template-columns:1fr 1fr;}.neb-days{font-size:34px;}}
+/* ── CALENDAR ── */
+.cal-top-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.cal-stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.04);}
+.cal-stat-num{font-family:'Lora',serif;font-size:26px;font-weight:700;line-height:1;}
+.cal-stat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-top:3px;}
+.cal-stat.past .cal-stat-num{color:#e05252;}
+.cal-stat.today-stat .cal-stat-num{color:var(--accent2);}
+.cal-stat.remain .cal-stat-num{color:var(--accent);}
+.cal-exam-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;}
+.cal-exam-strip::-webkit-scrollbar{height:3px;}
+.cal-exam-chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:white;white-space:nowrap;}
+.cal-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+.cal-month-label{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--text);}
+.cal-nav{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:14px;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Nunito',sans-serif;font-weight:700;}
+.cal-nav:hover{background:var(--surface2);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-dow{padding:8px 0;text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);border-bottom:1px solid var(--border);}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:default;transition:all 0.2s;border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;gap:2px;}
+.cal-day:nth-child(7n){border-right:none;}
+.cal-day.empty{background:var(--surface2);}
+.cal-day.past{background:#fff5f5;color:#c0392b;}
+.cal-day.past .cal-day-num{color:#e05252;}
+.cal-day.today-day{background:linear-gradient(135deg,#fffbf0,#fff8e6);z-index:1;outline:2px solid var(--accent2);outline-offset:-2px;}
+.cal-day.today-day .cal-day-num{color:var(--accent2);font-weight:800;font-size:15px;}
+.cal-day.future{background:#f0fdf4;}
+.cal-day.future .cal-day-num{color:#2d6a4f;}
+.cal-day-num{font-size:13px;line-height:1;z-index:1;}
+.cal-day-dot{width:5px;height:5px;border-radius:50%;z-index:1;}
+.cal-day.has-tasks .cal-day-dot{background:var(--accent2);}
+.cal-day.exam-day{outline:2px solid #c0392b;outline-offset:-2px;z-index:1;}
+.cal-day.exam-day .cal-day-dot{background:#c0392b;width:6px;height:6px;}
+.cal-day.exam-day.future{background:#fff0f0;}
+.cal-day.exam-day.past{background:#fff0f0;}
+.cal-exam-label{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.3px;color:#c0392b;line-height:1;z-index:1;text-align:center;}
+.cal-legend{display:flex;gap:12px;padding:12px 18px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.cal-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);font-weight:600;}
+.cal-leg-box{width:13px;height:13px;border-radius:3px;}
+.cal-leg-box.past{background:#fff5f5;border:1.5px solid #fca5a5;}
+.cal-leg-box.today-lb{background:#fffbf0;border:1.5px solid var(--accent2);}
+.cal-leg-box.future{background:#f0fdf4;border:1.5px solid #86efac;}
+.cal-leg-box.exam-lb{border:2px solid #c0392b;background:#fff0f0;}
+.cal-motivate{background:linear-gradient(135deg,var(--accent),#40916c);color:white;border-radius:12px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:14px;}
+.cal-motivate-icon{font-size:26px;flex-shrink:0;}
+.cal-motivate-text strong{font-weight:800;font-size:13.5px;display:block;margin-bottom:2px;}
+.cal-motivate-text{font-size:12.5px;line-height:1.5;font-weight:500;}
+
+/* ── PYQ ── */
+.pyq-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.pyq-stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 6px rgba(0,0,0,0.04);}
+.pyq-stat-icon{font-size:22px;}
+.pyq-stat-num{font-family:'Lora',serif;font-size:22px;font-weight:700;}
+.pyq-stat-lbl{font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.6px;margin-top:1px;}
+
+.pyq-add-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.pyq-add-card h3{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+
+.pyq-subject-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.pyq-sub-tab{padding:6px 14px;border-radius:20px;font-size:11.5px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+.pyq-sub-tab.active{color:white;border-color:transparent;}
+
+.pyq-list{display:flex;flex-direction:column;gap:8px;}
+.pyq-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:13px 15px;display:flex;align-items:flex-start;gap:11px;transition:all 0.35s ease;box-shadow:0 1px 4px rgba(0,0,0,0.03);border-left:4px solid var(--border);}
+.pyq-card:hover{box-shadow:0 4px 14px rgba(0,0,0,0.07);}
+.pyq-card.solved{background:linear-gradient(90deg,#f0fdf4,#f7fef9);border-color:#b7e5c8;border-left:4px solid var(--accent);animation:doneGlow 0.5s ease;}
+.pyq-card.solved .pyq-q{color:#2d6a4f;}
+.pyq-cb{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.25s;margin-top:2px;}
+.pyq-cb.checked{background:var(--accent);border-color:var(--accent);color:white;transform:scale(1.1);}
+.pyq-cb.checked::after{content:'✓';font-size:11px;font-weight:700;}
+.pyq-body{flex:1;}
+.pyq-meta{display:flex;gap:7px;align-items:center;margin-bottom:4px;flex-wrap:wrap;}
+.pyq-year-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;color:white;}
+.pyq-diff{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.pyq-diff.easy{background:#dcfce7;color:#166534;}
+.pyq-diff.medium{background:#fef3c7;color:#92400e;}
+.pyq-diff.hard{background:#fee2e2;color:#991b1b;}
+.pyq-q{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.4;transition:color 0.3s;}
+.pyq-marks{font-size:11px;color:var(--text-muted);}
+.pyq-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:2px 4px;border-radius:4px;transition:all 0.15s;flex-shrink:0;}
+.pyq-del:hover{background:#fee2e2;color:#c0392b;}
+.pyq-empty{text-align:center;padding:32px 20px;color:var(--text-muted);}
+.pyq-empty .es-icon{font-size:30px;margin-bottom:7px;}
+
+/* ── REVISION ── */
+.rev-header-card{background:linear-gradient(135deg,#7c3aed,#9f67f5);color:white;border-radius:14px;padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.rev-header-left .rev-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.8;margin-bottom:4px;}
+.rev-header-left .rev-pct{font-family:'Lora',serif;font-size:36px;font-weight:700;line-height:1;}
+.rev-header-left .rev-sub{font-size:11px;opacity:0.75;margin-top:3px;}
+.rev-ring{width:66px;height:66px;flex-shrink:0;}
+.rev-ring svg{transform:rotate(-90deg);}
+.rev-ring circle{fill:none;stroke-width:6;}
+.rev-subject-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.rev-sub-btn{padding:6px 14px;border-radius:20px;font-size:11.5px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+.rev-sub-btn.active{color:white;border-color:transparent;}
+.rev-block{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.rev-block-header{padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background 0.15s;border-bottom:1px solid var(--border);}
+.rev-block-header:hover{background:var(--surface2);}
+.rev-block-bar{width:5px;border-radius:3px;align-self:stretch;flex-shrink:0;min-height:38px;}
+.rev-block-info{flex:1;}
+.rev-block-name{font-size:14px;font-weight:700;color:var(--text);}
+.rev-block-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.rev-block-right{text-align:right;}
+.rev-block-pct{font-family:'Lora',serif;font-size:19px;font-weight:700;color:#7c3aed;}
+.rev-block-frac{font-size:11px;color:var(--text-muted);}
+.rev-chevron{font-size:16px;color:var(--text-muted);transition:transform 0.2s;}
+.rev-block.open .rev-chevron{transform:rotate(90deg);}
+.rev-topic-list{display:none;padding:8px 14px 14px;}
+.rev-block.open .rev-topic-list{display:block;}
+.rev-sec-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin:10px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.rev-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;border-bottom:1px solid rgba(0,0,0,0.04);transition:all 0.2s;}
+.rev-item:last-child{border-bottom:none;}
+.rev-item:hover{background:var(--surface2);}
+.rev-item.fully-done{background:linear-gradient(90deg,#f5f0ff,#faf7ff);border-left:3px solid #7c3aed;padding-left:9px;}
+.rev-item-text{flex:1;font-size:13px;color:var(--text);line-height:1.3;}
+.rev-item-text.all-done{color:#7c3aed;font-weight:600;}
+.rev-boxes{display:flex;gap:5px;flex-shrink:0;}
+.rev-box{width:30px;height:26px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;font-weight:800;color:var(--text-muted);transition:all 0.25s;user-select:none;letter-spacing:0.3px;}
+.rev-box:hover{border-color:#7c3aed;color:#7c3aed;}
+.rev-box.done{background:#7c3aed;border-color:#7c3aed;color:white;transform:scale(1.08);animation:revPop 0.3s ease;}
+@keyframes revPop{0%{transform:scale(1.25);}100%{transform:scale(1.08);}}
+.rev-empty{text-align:center;padding:40px 20px;color:var(--text-muted);}
+.rev-empty .es-icon{font-size:32px;margin-bottom:8px;}
+
+@media(max-width:500px){.page{padding:14px;}.form-row{flex-direction:column;}.progress-grid{grid-template-columns:1fr 1fr;}.neb-days{font-size:34px;}.cal-stat-num{font-size:20px;}.pyq-stats{grid-template-columns:1fr 1fr;}.rev-box{width:26px;height:24px;font-size:8px;}}
 </style>
 </head>
 <body>
@@ -199,6 +354,9 @@ header h1 span{color:var(--accent2);}
   <button class="tab-btn" onclick="showTab('progress',this)">📊 Progress</button>
   <button class="tab-btn" onclick="showTab('weekly',this)">📆 Weekly</button>
   <button class="tab-btn" onclick="showTab('exams',this)">🎯 Exams</button>
+  <button class="tab-btn" onclick="showTab('calendar',this)">🗓️ Calendar</button>
+  <button class="tab-btn" onclick="showTab('pyq',this)">📝 PYQ</button>
+  <button class="tab-btn" onclick="showTab('revision',this)">🔁 Revision</button>
 </div>
 
 <!-- TODAY -->
@@ -321,6 +479,115 @@ header h1 span{color:var(--accent2);}
   </div>
 </div>
 
+<!-- CALENDAR -->
+<div class="page" id="tab-calendar">
+  <div class="cal-top-stats">
+    <div class="cal-stat past"><div class="cal-stat-num" id="calPastDays">—</div><div class="cal-stat-lbl">Days Gone</div></div>
+    <div class="cal-stat today-stat"><div class="cal-stat-num" id="calTodayNum">—</div><div class="cal-stat-lbl">Today</div></div>
+    <div class="cal-stat remain"><div class="cal-stat-num" id="calRemainDays">—</div><div class="cal-stat-lbl">Days Left</div></div>
+  </div>
+  <div class="cal-exam-strip" id="calExamStrip"></div>
+  <div class="cal-wrap">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="changeCalMonth(-1)">←</button>
+      <div class="cal-month-label" id="calMonthLabel"></div>
+      <button class="cal-nav" onclick="changeCalMonth(1)">→</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div>
+      <div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
+    </div>
+    <div class="cal-grid" id="calDays"></div>
+    <div class="cal-legend">
+      <div class="cal-leg-item"><div class="cal-leg-box past"></div>Beeta hua din</div>
+      <div class="cal-leg-item"><div class="cal-leg-box today-lb"></div>Aaj</div>
+      <div class="cal-leg-item"><div class="cal-leg-box future"></div>Baaki din</div>
+      <div class="cal-leg-item"><div class="cal-leg-box exam-lb"></div>Exam</div>
+    </div>
+  </div>
+  <div class="cal-motivate" id="calMotivate">
+    <div class="cal-motivate-icon">💪</div>
+    <div class="cal-motivate-text"><strong id="calMotivateTitle">Keep going!</strong><span id="calMotivateMsg">Har din ek kadam aage hai.</span></div>
+  </div>
+</div>
+
+<!-- PYQ -->
+<div class="page" id="tab-pyq">
+  <div class="pyq-stats">
+    <div class="pyq-stat"><div class="pyq-stat-icon">📋</div><div><div class="pyq-stat-num" id="pyqTotal">0</div><div class="pyq-stat-lbl">Total PYQs</div></div></div>
+    <div class="pyq-stat"><div class="pyq-stat-icon">✅</div><div><div class="pyq-stat-num" id="pyqSolved">0</div><div class="pyq-stat-lbl">Solved</div></div></div>
+  </div>
+
+  <div class="pyq-add-card">
+    <h3>+ Add PYQ</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="pyqSubject">
+          <option value="qm">Quantum Mechanics II</option>
+          <option value="ed">Electrodynamics I</option>
+          <option value="sm">Statistical Mechanics</option>
+          <option value="mp">Mathematical Physics II</option>
+          <option value="mt">Measurement Techniques</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Year</label>
+        <input type="number" id="pyqYear" placeholder="e.g. 2024" min="2015" max="2025">
+      </div>
+      <div class="form-group">
+        <label>Difficulty</label>
+        <select id="pyqDiff">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Marks</label>
+        <input type="number" id="pyqMarks" placeholder="e.g. 5" min="1" max="20">
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:9px">
+      <div class="form-group" style="flex:3">
+        <label>Question</label>
+        <input type="text" id="pyqQ" placeholder="e.g. Derive Fermi Golden Rule using time-dependent perturbation theory">
+      </div>
+      <button class="add-btn" onclick="addPYQ()">Add</button>
+    </div>
+  </div>
+
+  <!-- Subject filter tabs -->
+  <div class="pyq-subject-tabs" id="pyqSubTabs"></div>
+
+  <div class="pyq-list" id="pyqList"></div>
+  <div class="pyq-empty" id="pyqEmpty"><div class="es-icon">📝</div><p>No PYQs yet — add questions above!</p></div>
+</div>
+
+<!-- REVISION -->
+<div class="page" id="tab-revision">
+  <div class="rev-header-card">
+    <div class="rev-header-left">
+      <div class="rev-label">Revision Progress</div>
+      <div class="rev-pct" id="revPct">0%</div>
+      <div class="rev-sub" id="revSub">0 of 0 topics — 3/3 done</div>
+    </div>
+    <div class="rev-ring">
+      <svg viewBox="0 0 70 70" width="66" height="66">
+        <circle cx="35" cy="35" r="28" stroke="rgba(255,255,255,0.25)"/>
+        <circle cx="35" cy="35" r="28" stroke="white" id="revRingCircle"
+          stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="rev-subject-filter" id="revSubFilter"></div>
+  <div id="revBlocks"></div>
+  <div class="rev-empty" id="revEmpty" style="display:none">
+    <div class="es-icon">📖</div>
+    <p>Pehle Syllabus tab mein topics tick karo — woh topics yahan dikhenge!</p>
+  </div>
+</div>
+
 <script>
 const SYLLABUS = {
   qm:{name:'Quantum Mechanics II',code:'PH406',cls:'qm',sections:[
@@ -364,11 +631,11 @@ const SYLLABUS = {
 };
 
 const EXAMS = [
-  { id:'mp', date:'2025-05-03', label:'3 May 2025' },
-  { id:'sm', date:'2025-05-04', label:'4 May 2025' },
-  { id:'qm', date:'2025-05-05', label:'5 May 2025' },
-  { id:'ed', date:'2025-05-07', label:'7 May 2025' },
-  { id:'mt', date:'2025-05-08', label:'8 May 2025' },
+  { id:'mp', date:'2026-05-03', label:'3 May 2026' },
+  { id:'sm', date:'2026-05-04', label:'4 May 2026' },
+  { id:'qm', date:'2026-05-05', label:'5 May 2026' },
+  { id:'ed', date:'2026-05-07', label:'7 May 2026' },
+  { id:'mt', date:'2026-05-08', label:'8 May 2026' },
 ];
 
 function daysUntil(dateStr) {
@@ -438,6 +705,9 @@ function showTab(name,btn){
   if(name==='progress')renderProgress();
   if(name==='weekly')renderWeekly();
   if(name==='exams')renderExams();
+  if(name==='calendar')renderCalendar();
+  if(name==='pyq')renderPYQ();
+  if(name==='revision')renderRevision();
 }
 
 // TODAY
@@ -543,7 +813,7 @@ function renderProgress(){
   if(!allDone.length){doneList.innerHTML='';emptyDone.style.display='block';}
   else{
     emptyDone.style.display='none';
-    doneList.innerHTML=allDone.slice(0,30).map(t=>`<div class="task-card done"><div class="task-checkbox checked"></div><div class="task-body"><div class="task-meta"><span class="subject-tag ${SUBJECTS[t.subject].cls}">${SUBJECTS[t.subject].short}</span><span class="task-time-slot">${t.day}</span></div><div class="task-title">${esc(t.title)}</div>${t.notes?`<div class="task-notes">${esc(t.notes)}</div>`:''}</div></div>`).join('');
+    doneList.innerHTML=allDone.slice(0,30).map(t=>`<div class="task-card done"><div class="task-checkbox checked"></div><div class="task-body"><div class="task-meta"><span class="subject-tag ${SUBJECTS[t.subject].cls}">${SUBJECTS[t.subject].short}</span><span class="task-time-slot">${t.day}</span><span style="font-size:10px;font-weight:700;background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;">✓ Done</span></div><div class="task-title">${esc(t.title)}</div>${t.notes?`<div class="task-notes">${esc(t.notes)}</div>`:''}</div></div>`).join('');
   }
 }
 
@@ -572,9 +842,318 @@ function renderWeekly(){
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+// ── PYQ ──
+let pyqFilter = 'all';
+
+function addPYQ(){
+  const subject = document.getElementById('pyqSubject').value;
+  const year    = document.getElementById('pyqYear').value.trim();
+  const diff    = document.getElementById('pyqDiff').value;
+  const marks   = document.getElementById('pyqMarks').value.trim();
+  const q       = document.getElementById('pyqQ').value.trim();
+  if(!q){ document.getElementById('pyqQ').focus(); return; }
+  if(!data.pyqs) data.pyqs = [];
+  data.pyqs.push({id:Date.now(), subject, year, diff, marks, q, solved:false});
+  save();
+  document.getElementById('pyqQ').value='';
+  document.getElementById('pyqYear').value='';
+  renderPYQ();
+}
+
+function togglePYQ(id){
+  if(!data.pyqs) return;
+  const p = data.pyqs.find(x=>x.id===id);
+  if(p){ p.solved=!p.solved; save(); renderPYQ(); }
+}
+
+function deletePYQ(id){
+  if(!data.pyqs) return;
+  data.pyqs = data.pyqs.filter(x=>x.id!==id);
+  save(); renderPYQ();
+}
+
+function setPYQFilter(f){
+  pyqFilter = f;
+  renderPYQ();
+}
+
+function renderPYQ(){
+  if(!data.pyqs) data.pyqs=[];
+  const all = data.pyqs;
+  const filtered = pyqFilter==='all' ? all : all.filter(p=>p.subject===pyqFilter);
+  const total = all.length, solved = all.filter(p=>p.solved).length;
+
+  document.getElementById('pyqTotal').textContent = total;
+  document.getElementById('pyqSolved').textContent = solved;
+
+  // Subject filter tabs
+  const bgMap = {qm:'var(--qm)',ed:'var(--ed)',sm:'var(--sm)',mp:'var(--mp)',mt:'var(--mt)'};
+  const tabs = [['all','All','#555']].concat(Object.entries(SUBJECTS).map(([k,v])=>[k,v.short,bgMap[k]]));
+  document.getElementById('pyqSubTabs').innerHTML = tabs.map(function(t){
+    const cnt = t[0]==='all' ? all.length : all.filter(p=>p.subject===t[0]).length;
+    const solv = t[0]==='all' ? solved : all.filter(p=>p.subject===t[0]&&p.solved).length;
+    const isActive = pyqFilter===t[0];
+    return '<button class="pyq-sub-tab'+(isActive?' active':'')+'" style="'+(isActive?'background:'+t[2]+';color:white':'')+'" onclick="setPYQFilter(\''+t[0]+'\')">'
+      +t[1]+' <span style="opacity:0.8;font-size:10px">'+solv+'/'+cnt+'</span></button>';
+  }).join('');
+
+  const list = document.getElementById('pyqList');
+  const empty = document.getElementById('pyqEmpty');
+
+  if(!filtered.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  // Sort: unsolved first, then by year desc
+  const sorted = [...filtered].sort((a,b)=>{
+    if(a.solved !== b.solved) return a.solved?1:-1;
+    return (b.year||0)-(a.year||0);
+  });
+
+  list.innerHTML = sorted.map(function(p){
+    const sub = SUBJECTS[p.subject];
+    return '<div class="pyq-card'+(p.solved?' solved':'')+'">'
+      +'<div class="pyq-cb'+(p.solved?' checked':'')+'" onclick="togglePYQ('+p.id+')"></div>'
+      +'<div class="pyq-body">'
+        +'<div class="pyq-meta">'
+          +'<span class="pyq-year-badge" style="background:'+bgMap[p.subject]+'">'+sub.short+(p.year?' · '+p.year:'')+'</span>'
+          +'<span class="pyq-diff '+p.diff+'">'+p.diff.charAt(0).toUpperCase()+p.diff.slice(1)+'</span>'
+          +(p.marks?'<span class="pyq-marks">'+p.marks+' marks</span>':'')
+        +'</div>'
+        +'<div class="pyq-q">'+esc(p.q)+'</div>'
+      +'</div>'
+      +'<button class="pyq-del" onclick="deletePYQ('+p.id+')">×</button>'
+    +'</div>';
+  }).join('');
+}
+
+
+// ── REVISION ──
+let revFilter = 'all';
+
+function revK(sid, si, ti, r){ return 'rv_'+sid+'_'+si+'_'+ti+'_'+r; }
+function setRevFilter(f){ revFilter = f; renderRevision(); }
+function toggleRev(sid, si, ti, r){
+  if(!data.rev) data.rev={};
+  const k=revK(sid,si,ti,r);
+  data.rev[k]=!data.rev[k];
+  save(); renderRevision();
+}
+function toggleRevBlock(id){ document.getElementById(id).classList.toggle('open'); }
+
+function renderRevision(){
+  if(!data.rev) data.rev={};
+  if(!data.syl) data.syl={};
+  const bgMap={qm:'var(--qm)',ed:'var(--ed)',sm:'var(--sm)',mp:'var(--mp)',mt:'var(--mt)'};
+
+  // Collect syllabus-done topics per subject
+  const subTopics={};
+  Object.keys(SYLLABUS).forEach(function(sid){
+    subTopics[sid]=[];
+    SYLLABUS[sid].sections.forEach(function(sec,si){
+      sec.topics.forEach(function(topic,ti){
+        if(data.syl[sylK(sid,si,ti)]) subTopics[sid].push({si,ti,text:topic,sec:sec.t});
+      });
+    });
+  });
+
+  // Grand stats
+  let grandTotal=0, grandFull=0;
+  Object.keys(SYLLABUS).forEach(function(sid){
+    subTopics[sid].forEach(function(tp){
+      grandTotal++;
+      if(data.rev[revK(sid,tp.si,tp.ti,1)] && data.rev[revK(sid,tp.si,tp.ti,2)] && data.rev[revK(sid,tp.si,tp.ti,3)]) grandFull++;
+    });
+  });
+  const pct=grandTotal===0?0:Math.round(grandFull/grandTotal*100);
+  document.getElementById('revPct').textContent=pct+'%';
+  document.getElementById('revSub').textContent=grandFull+' of '+grandTotal+' topics — 3/3 complete';
+  document.getElementById('revRingCircle').style.strokeDashoffset=175.9-(175.9*pct/100);
+
+  // Filter buttons
+  const fbtns=[['all','All']].concat(Object.entries(SUBJECTS).map(([k,v])=>[k,v.short]));
+  document.getElementById('revSubFilter').innerHTML=fbtns.map(function(f){
+    const topics=f[0]==='all'?Object.values(subTopics).flat():subTopics[f[0]]||[];
+    const full=topics.filter(function(tp){
+      const sid=f[0]==='all'?Object.keys(SYLLABUS).find(s=>subTopics[s].includes(tp)):f[0];
+      return data.rev[revK(sid,tp.si,tp.ti,1)]&&data.rev[revK(sid,tp.si,tp.ti,2)]&&data.rev[revK(sid,tp.si,tp.ti,3)];
+    }).length;
+    const isAct=revFilter===f[0];
+    return '<button class="rev-sub-btn'+(isAct?' active':'')+'" style="'+(isAct?'background:'+(f[0]==='all'?'#7c3aed':bgMap[f[0]])+';':'')
+      +'" onclick="setRevFilter(\''+f[0]+'\')">'+f[1]+' <span style="opacity:0.8;font-size:10px">'+full+'/'+topics.length+'</span></button>';
+  }).join('');
+
+  if(grandTotal===0){
+    document.getElementById('revBlocks').innerHTML='';
+    document.getElementById('revEmpty').style.display='block';
+    return;
+  }
+  document.getElementById('revEmpty').style.display='none';
+
+  const openSet=new Set([...document.querySelectorAll('.rev-block.open')].map(el=>el.id));
+  const toShow=revFilter==='all'?Object.keys(SYLLABUS):[revFilter];
+
+  document.getElementById('revBlocks').innerHTML=toShow.map(function(sid){
+    const topics=subTopics[sid];
+    if(!topics||!topics.length) return '';
+    const sub=SYLLABUS[sid];
+    const subjFull=topics.filter(function(tp){
+      return data.rev[revK(sid,tp.si,tp.ti,1)]&&data.rev[revK(sid,tp.si,tp.ti,2)]&&data.rev[revK(sid,tp.si,tp.ti,3)];
+    }).length;
+    const subjPct=Math.round(subjFull/topics.length*100);
+    const isOpen=openSet.has('rv-'+sid);
+
+    // Group by section
+    const secMap={};
+    topics.forEach(function(tp){ if(!secMap[tp.sec])secMap[tp.sec]=[]; secMap[tp.sec].push(tp); });
+
+    const inner=Object.entries(secMap).map(function([secT,secTps]){
+      return '<div class="rev-sec-title">'+esc(secT)+'</div>'
+        +secTps.map(function(tp){
+          const r1=!!data.rev[revK(sid,tp.si,tp.ti,1)];
+          const r2=!!data.rev[revK(sid,tp.si,tp.ti,2)];
+          const r3=!!data.rev[revK(sid,tp.si,tp.ti,3)];
+          const all3=r1&&r2&&r3;
+          return '<div class="rev-item'+(all3?' fully-done':'')+'">'
+            +'<div class="rev-item-text'+(all3?' all-done':'')+'">'+esc(tp.text)+'</div>'
+            +'<div class="rev-boxes">'
+              +'<div class="rev-box'+(r1?' done':'')+'" onclick="toggleRev(\''+sid+'\','+tp.si+','+tp.ti+',1)">R1</div>'
+              +'<div class="rev-box'+(r2?' done':'')+'" onclick="toggleRev(\''+sid+'\','+tp.si+','+tp.ti+',2)">R2</div>'
+              +'<div class="rev-box'+(r3?' done':'')+'" onclick="toggleRev(\''+sid+'\','+tp.si+','+tp.ti+',3)">R3</div>'
+            +'</div>'
+          +'</div>';
+        }).join('');
+    }).join('');
+
+    return '<div class="rev-block'+(isOpen?' open':'')+'" id="rv-'+sid+'">'
+      +'<div class="rev-block-header" onclick="toggleRevBlock(\'rv-'+sid+'\')">'
+        +'<div class="rev-block-bar '+sub.cls+'"></div>'
+        +'<div class="rev-block-info"><div class="rev-block-name">'+sub.name+'</div><div class="rev-block-sub">'+topics.length+' topics ready to revise</div></div>'
+        +'<div class="rev-block-right"><div class="rev-block-pct">'+subjPct+'%</div><div class="rev-block-frac">'+subjFull+'/'+topics.length+' done</div></div>'
+        +'<span class="rev-chevron">›</span>'
+      +'</div>'
+      +'<div class="rev-topic-list">'+inner+'</div>'
+    +'</div>';
+  }).join('');
+}
+
+let calOffset = 0;
+
+// Sem start date (approximate) and last exam
+const SEM_START = new Date('2026-01-06');
+const LAST_EXAM = new Date('2026-05-08');
+
+const EXAM_DATES = {
+  '2026-05-03': {id:'mp', label:'MP'},
+  '2026-05-04': {id:'sm', label:'SM'},
+  '2026-05-05': {id:'qm', label:'QM'},
+  '2026-05-07': {id:'ed', label:'ED'},
+  '2026-05-08': {id:'mt', label:'MT'},
+};
+const EXAM_BG = {qm:'var(--qm)',ed:'var(--ed)',sm:'var(--sm)',mp:'var(--mp)',mt:'var(--mt)'};
+
+function fmtDateKey(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function getMotivation(daysLeft){
+  if(daysLeft <= 0) return {icon:'🎉', title:'Exams khatam!', msg:'Sari mehnat rang layi — ab aram karo!'};
+  if(daysLeft === 1) return {icon:'🔥', title:'Kal last exam!', msg:'Ek aur push — tu kar sakta hai!'};
+  if(daysLeft <= 3) return {icon:'⚡', title:'Final stretch!', msg:'Bas '+daysLeft+' din — poori taakat laga do!'};
+  if(daysLeft <= 7) return {icon:'🎯', title:'Exam week aa gaya!', msg:daysLeft+' din bacha hai — focus mode on!'};
+  if(daysLeft <= 14) return {icon:'📚', title:daysLeft+' din bacha hai', msg:'Ab revision shuru karo — syllabus tick karo!'};
+  if(daysLeft <= 30) return {icon:'💪', title:daysLeft+' din bacha hai', msg:'Consistent raho — roz thoda thoda karo!'};
+  return {icon:'🌱', title:daysLeft+' din bacha hai', msg:'Solid foundation bana lo — chapters clearly samjho!'};
+}
+
+function renderCalendar(){
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Clamp: min = Jan 2026, max = May 2026
+  const minOffset = (2026 - today.getFullYear())*12 + (0 - today.getMonth()); // Jan 2026
+  const maxOffset = (2026 - today.getFullYear())*12 + (4 - today.getMonth()); // May 2026
+  calOffset = Math.max(minOffset, Math.min(maxOffset, calOffset));
+
+  const viewDate = new Date(today.getFullYear(), today.getMonth() + calOffset, 1);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+
+  // Top stats
+  const msDay = 1000*60*60*24;
+  const pastDays = Math.max(0, Math.round((today - SEM_START) / msDay));
+  const remainDays = Math.max(0, Math.round((LAST_EXAM - today) / msDay));
+  document.getElementById('calPastDays').textContent = pastDays;
+  document.getElementById('calTodayNum').textContent = today.getDate()+'/'+('0'+(today.getMonth()+1)).slice(-2);
+  document.getElementById('calRemainDays').textContent = remainDays;
+
+  // Exam strip
+  const stripBgMap = {qm:'#5b6abf',ed:'#c0392b',sm:'#2d6a4f',mp:'#9b59b6',mt:'#e07b39'};
+  document.getElementById('calExamStrip').innerHTML = EXAMS.map(function(e){
+    const d = daysUntil(e.date);
+    const sub = SYLLABUS[e.id];
+    const txt = d < 0 ? 'Done ✓' : d === 0 ? 'TODAY 🔥' : d+' days left';
+    return '<span class="cal-exam-chip" style="background:'+stripBgMap[e.id]+';'+(d<0?'opacity:0.5':'')+'">'
+      +sub.name.split(' ').slice(-1)[0]+' · '+e.label.split(' ').slice(0,2).join(' ')+' · '+txt+'</span>';
+  }).join('');
+
+  // Month label with nav disable
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthLabel').textContent = monthNames[month] + ' ' + year;
+  // Disable nav buttons at boundaries
+  document.querySelectorAll('.cal-nav')[0].style.opacity = calOffset <= minOffset ? '0.3' : '1';
+  document.querySelectorAll('.cal-nav')[1].style.opacity = calOffset >= maxOffset ? '0.3' : '1';
+  document.querySelectorAll('.cal-nav')[0].disabled = calOffset <= minOffset;
+  document.querySelectorAll('.cal-nav')[1].disabled = calOffset >= maxOffset;
+
+  // Build grid
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  let html = '';
+
+  for(let i=0;i<firstDay;i++) html += '<div class="cal-day empty"></div>';
+
+  for(let d=1; d<=daysInMonth; d++){
+    const thisDate = new Date(year, month, d);
+    const key = fmtDateKey(thisDate);
+    const isAfterLastExam = thisDate > LAST_EXAM;
+    const isPast = thisDate < today;
+    const isToday = thisDate.getTime() === today.getTime();
+    const isFuture = thisDate > today && !isAfterLastExam;
+    const isExam = !!EXAM_DATES[key];
+    const hasTasks = getTasks(key).length > 0;
+    const examInfo = EXAM_DATES[key];
+
+    let cls = 'cal-day';
+    if(isAfterLastExam) cls += ' empty'; // grey out after May 8
+    else if(isPast) cls += ' past';
+    else if(isToday) cls += ' today-day';
+    else if(isFuture) cls += ' future';
+    if(isExam) cls += ' exam-day';
+    if(hasTasks && !isAfterLastExam) cls += ' has-tasks';
+
+    html += '<div class="'+cls+'">'
+      +'<div class="cal-day-num">'+(isAfterLastExam?'':d)+'</div>'
+      +(isExam ? '<div class="cal-exam-label">'+examInfo.label+'</div>' : '')
+      +(isAfterLastExam ? '' : '<div class="cal-day-dot"></div>')
+      +'</div>';
+  }
+
+  document.getElementById('calDays').innerHTML = html;
+
+  // Motivate banner
+  const m = getMotivation(remainDays);
+  document.getElementById('calMotivate').querySelector('.cal-motivate-icon').textContent = m.icon;
+  document.getElementById('calMotivateTitle').textContent = m.title;
+  document.getElementById('calMotivateMsg').textContent = m.msg;
+}
+
+function changeCalMonth(dir){ calOffset += dir; renderCalendar(); }
+
 renderTodayTasks();
 renderSyllabus();
 renderExams();
+renderCalendar();
+renderPYQ();
+renderRevision();
 </script>
 </body>
 </html>
