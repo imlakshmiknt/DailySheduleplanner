@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Planner — MSc Physics Sem II</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f6f2; --surface:#fff; --surface2:#f0ede6; --border:#e5e0d8;
+  --text:#1a1814; --text-muted:#8a8070; --accent:#2d6a4f; --accent2:#e07b39;
+  --qm:#5b6abf; --ed:#c0392b; --sm:#2d6a4f; --mp:#9b59b6; --mt:#e07b39;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 12px rgba(0,0,0,0.05);}
+header h1{font-family:'Lora',serif;font-size:19px;color:var(--accent);font-weight:700;}
+header h1 span{color:var(--accent2);}
+.header-date{font-size:11px;color:var(--text-muted);font-weight:500;text-align:right;}
+
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 12px;gap:2px;overflow-x:auto;}
+.tabs::-webkit-scrollbar{height:0;}
+.tab-btn{padding:11px 14px;font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;color:var(--text-muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.page{display:none;padding:18px;max-width:820px;margin:0 auto;}
+.page.active{display:block;}
+
+.schedule-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;}
+.schedule-strip::-webkit-scrollbar{height:3px;}
+.time-chip{flex-shrink:0;padding:5px 11px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+.time-chip.study{background:#dbeafe;color:#1e40af;}
+.time-chip.rest{background:#dcfce7;color:#166534;}
+.time-chip.sleep{background:#ede9fe;color:#5b21b6;}
+.time-chip.meal{background:#fef3c7;color:#92400e;}
+.time-chip.class{background:#fee2e2;color:#991b1b;}
+
+.section-title{font-family:'Lora',serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.add-task-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.add-task-card h3{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:130px;}
+.form-group label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);}
+.form-group select,.form-group input{padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);background:var(--bg);outline:none;transition:border 0.2s;}
+.form-group select:focus,.form-group input:focus{border-color:var(--accent);}
+.add-btn{padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;align-self:flex-end;}
+.add-btn:hover{background:#245a40;}
+
+.task-list{display:flex;flex-direction:column;gap:7px;}
+.task-card{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:flex-start;gap:11px;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03);}
+.task-card:hover{box-shadow:0 4px 14px rgba(0,0,0,0.07);}
+.task-card.done{opacity:0.5;}
+.task-card.done .task-title{text-decoration:line-through;}
+.task-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.task-checkbox.checked{background:var(--accent);border-color:var(--accent);color:white;}
+.task-checkbox.checked::after{content:'✓';font-size:11px;font-weight:700;}
+.task-body{flex:1;}
+.task-meta{display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap;}
+.subject-tag{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:2px 7px;border-radius:4px;color:white;}
+.task-title{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.3;}
+.task-notes{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.task-time-slot{font-size:11px;color:var(--text-muted);font-weight:500;}
+.task-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:2px 4px;border-radius:4px;transition:all 0.15s;flex-shrink:0;}
+.task-del:hover{background:#fee2e2;color:#c0392b;}
+.empty-state{text-align:center;padding:36px 20px;color:var(--text-muted);}
+.empty-state .es-icon{font-size:32px;margin-bottom:7px;}
+.empty-state p{font-size:13px;}
+
+/* PROGRESS */
+.overall-card{background:linear-gradient(135deg,var(--accent) 0%,#40916c 100%);color:white;border-radius:14px;padding:18px 20px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;}
+.oc-label{font-size:11px;opacity:0.8;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.oc-pct{font-family:'Lora',serif;font-size:36px;font-weight:700;line-height:1;}
+.oc-sub{font-size:11px;opacity:0.75;margin-top:3px;}
+.overall-ring{width:66px;height:66px;}
+.overall-ring svg{transform:rotate(-90deg);}
+.overall-ring circle{fill:none;stroke-width:6;}
+.progress-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:22px;}
+.progress-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:15px;box-shadow:0 2px 6px rgba(0,0,0,0.04);}
+.pc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.pc-name{font-size:12px;font-weight:700;color:var(--text);}
+.pc-pct{font-family:'Lora',serif;font-size:20px;font-weight:700;}
+.progress-bar-bg{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:3px;transition:width 0.4s;}
+.pc-stats{margin-top:7px;font-size:11px;color:var(--text-muted);}
+
+/* WEEKLY */
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.week-nav button{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:7px 13px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text);transition:all 0.15s;}
+.week-nav button:hover{background:var(--surface2);}
+.week-label{font-family:'Lora',serif;font-size:15px;font-weight:700;}
+.week-grid{display:flex;flex-direction:column;gap:6px;}
+.week-row{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:12px;}
+.week-row.today{border-color:var(--accent);background:linear-gradient(90deg,#f0fdf4,white);}
+.week-day{width:65px;flex-shrink:0;}
+.wd-name{font-size:13px;font-weight:700;color:var(--text);}
+.wd-date{font-size:11px;color:var(--text-muted);}
+.week-bars{flex:1;display:flex;flex-direction:column;gap:4px;}
+.week-bar-row{display:flex;align-items:center;gap:6px;}
+.wb-label{font-size:10px;width:26px;color:var(--text-muted);font-weight:700;}
+.wb-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.wb-fill{height:100%;border-radius:3px;}
+.week-total{font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap;}
+
+/* SYLLABUS */
+.syl-header-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.syl-pct-big{font-family:'Lora',serif;font-size:34px;font-weight:700;color:var(--accent);}
+.syl-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:2px;}
+.syl-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.syl-legend{display:flex;gap:10px;flex-wrap:wrap;}
+.syl-leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);}
+.syl-dot{width:9px;height:9px;border-radius:50%;}
+
+.subject-block{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.sb-header{padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background 0.15s;}
+.sb-header:hover{background:var(--surface2);}
+.sb-bar{width:5px;border-radius:3px;align-self:stretch;flex-shrink:0;min-height:42px;}
+.sb-info{flex:1;}
+.sb-name{font-size:14px;font-weight:700;color:var(--text);}
+.sb-code{font-size:11px;color:var(--text-muted);margin-top:1px;}
+.sb-right{text-align:right;}
+.sb-pct{font-family:'Lora',serif;font-size:20px;font-weight:700;}
+.sb-frac{font-size:11px;color:var(--text-muted);}
+.sb-chevron{font-size:16px;color:var(--text-muted);transition:transform 0.2s;}
+.subject-block.open .sb-chevron{transform:rotate(90deg);}
+.sb-progress-bar{height:3px;background:var(--surface2);margin:0 16px;}
+.sb-progress-fill{height:100%;transition:width 0.4s;}
+
+.topic-list{display:none;padding:10px 16px 16px;border-top:1px solid var(--border);}
+.subject-block.open .topic-list{display:block;}
+.topic-section{margin-bottom:16px;}
+.topic-section:last-child{margin-bottom:0;}
+.topic-sec-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.topic-item{display:flex;align-items:flex-start;gap:10px;padding:7px 6px;border-radius:7px;cursor:pointer;transition:background 0.15s;}
+.topic-item:hover{background:var(--surface2);}
+.topic-item.done .topic-text{text-decoration:line-through;color:var(--text-muted);}
+.topic-cb{width:17px;height:17px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.topic-item.done .topic-cb{background:var(--accent);border-color:var(--accent);color:white;}
+.topic-item.done .topic-cb::after{content:'✓';font-size:10px;font-weight:700;}
+.topic-text{font-size:13px;color:var(--text);line-height:1.4;}
+
+/* colors */
+.qm{background:var(--qm);} .ed{background:var(--ed);} .sm{background:var(--sm);} .mp{background:var(--mp);} .mt{background:var(--mt);}
+.qm-txt{color:var(--qm);} .ed-txt{color:var(--ed);} .sm-txt{color:var(--sm);} .mp-txt{color:var(--mp);} .mt-txt{color:var(--mt);}
+
+/* EXAMS */
+.next-exam-banner{border-radius:14px;padding:18px 20px;margin-bottom:16px;color:white;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.neb-left .neb-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.8;margin-bottom:4px;}
+.neb-left .neb-name{font-family:'Lora',serif;font-size:22px;font-weight:700;line-height:1.2;}
+.neb-left .neb-date{font-size:12px;opacity:0.8;margin-top:3px;}
+.neb-countdown{text-align:center;flex-shrink:0;}
+.neb-days{font-family:'Lora',serif;font-size:42px;font-weight:700;line-height:1;}
+.neb-days-label{font-size:11px;opacity:0.75;letter-spacing:1px;text-transform:uppercase;}
+
+.exam-cards{display:flex;flex-direction:column;gap:10px;}
+.exam-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.exam-card-top{display:flex;align-items:center;gap:0;}
+.ec-color-bar{width:5px;align-self:stretch;flex-shrink:0;}
+.ec-main{flex:1;padding:14px 16px;}
+.ec-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.ec-name{font-size:14px;font-weight:700;color:var(--text);}
+.ec-date-chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;color:white;}
+.ec-countdown-row{display:flex;align-items:center;gap:10px;}
+.ec-days-num{font-family:'Lora',serif;font-size:28px;font-weight:700;line-height:1;}
+.ec-days-txt{font-size:11px;color:var(--text-muted);font-weight:600;}
+.ec-progress-wrap{flex:1;}
+.ec-progress-label{display:flex;justify-content:space-between;margin-bottom:5px;}
+.ec-prog-txt{font-size:10.5px;color:var(--text-muted);font-weight:600;}
+.ec-prog-pct{font-size:10.5px;font-weight:700;}
+.ec-bar-bg{height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.ec-bar-fill{height:100%;border-radius:4px;transition:width 0.5s;}
+.ec-status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.ec-status.urgent{background:#fee2e2;color:#c0392b;}
+.ec-status.soon{background:#fef3c7;color:#92400e;}
+.ec-status.ok{background:#dcfce7;color:#166534;}
+.ec-status.done{background:var(--surface2);color:var(--text-muted);}
+
+.exam-tips{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:16px;}
+.exam-tips h4{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;}
+.tip-row{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text);}
+.tip-row:last-child{border-bottom:none;}
+.tip-icon{flex-shrink:0;}
+
+@media(max-width:500px){.page{padding:14px;}.form-row{flex-direction:column;}.progress-grid{grid-template-columns:1fr 1fr;}.neb-days{font-size:34px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Study<span>Planner</span> ✦</h1>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('today',this)">📅 Today</button>
+  <button class="tab-btn" onclick="showTab('syllabus',this)">📖 Syllabus</button>
+  <button class="tab-btn" onclick="showTab('progress',this)">📊 Progress</button>
+  <button class="tab-btn" onclick="showTab('weekly',this)">📆 Weekly</button>
+  <button class="tab-btn" onclick="showTab('exams',this)">🎯 Exams</button>
+</div>
+
+<!-- TODAY -->
+<div class="page active" id="tab-today">
+  <div class="schedule-strip">
+    <span class="time-chip study">📖 12AM–5AM Study</span>
+    <span class="time-chip rest">☕ 5–6AM Rest</span>
+    <span class="time-chip study">📚 6–9AM Study</span>
+    <span class="time-chip meal">🍽 9–10AM Dinner</span>
+    <span class="time-chip study">🔬 10AM–2PM Study</span>
+    <span class="time-chip sleep">🌙 2–7PM Sleep</span>
+    <span class="time-chip meal">🌅 7–8PM Breakfast</span>
+    <span class="time-chip class">🎓 8PM–12AM Class</span>
+  </div>
+  <div class="add-task-card">
+    <h3>+ Add Today's Task</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="taskSubject">
+          <option value="qm">Quantum Mechanics II</option>
+          <option value="ed">Electrodynamics I</option>
+          <option value="sm">Statistical Mechanics</option>
+          <option value="mp">Mathematical Physics II</option>
+          <option value="mt">Measurement Techniques</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Study Slot</label>
+        <select id="taskSlot">
+          <option>12AM – 5AM</option>
+          <option>6AM – 9AM</option>
+          <option>10AM – 2PM</option>
+          <option>8PM – 12AM (Class)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:9px">
+      <div class="form-group" style="flex:2">
+        <label>Topic / Task</label>
+        <input type="text" id="taskTitle" placeholder="e.g. Stark Effect — degenerate case">
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <input type="text" id="taskNotes" placeholder="page no., reference...">
+      </div>
+      <button class="add-btn" onclick="addTask()">Add</button>
+    </div>
+  </div>
+  <div class="section-title">Today's Tasks</div>
+  <div class="task-list" id="taskList"></div>
+  <div class="empty-state" id="emptyState"><div class="es-icon">📝</div><p>No tasks yet — add your first task above!</p></div>
+</div>
+
+<!-- SYLLABUS -->
+<div class="page" id="tab-syllabus">
+  <div class="syl-header-card">
+    <div>
+      <div class="syl-label">Syllabus Covered</div>
+      <div class="syl-pct-big" id="sylPct">0%</div>
+      <div class="syl-sub" id="sylSub">0 of 0 topics done</div>
+    </div>
+    <div class="syl-legend">
+      <div class="syl-leg"><div class="syl-dot qm"></div>QM II</div>
+      <div class="syl-leg"><div class="syl-dot ed"></div>Electrodyn.</div>
+      <div class="syl-leg"><div class="syl-dot sm"></div>Stat. Mech.</div>
+      <div class="syl-leg"><div class="syl-dot mp"></div>Math Phy.</div>
+      <div class="syl-leg"><div class="syl-dot mt"></div>Meas. Tech.</div>
+    </div>
+  </div>
+  <div id="sylBlocks"></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="page" id="tab-progress">
+  <div class="overall-card">
+    <div>
+      <div class="oc-label">Today's Progress</div>
+      <div class="oc-pct" id="overallPct">0%</div>
+      <div class="oc-sub" id="overallSub">0 of 0 tasks done</div>
+    </div>
+    <div class="overall-ring">
+      <svg viewBox="0 0 70 70" width="66" height="66">
+        <circle cx="35" cy="35" r="28" stroke="rgba(255,255,255,0.2)"/>
+        <circle cx="35" cy="35" r="28" stroke="white" id="ringCircle" stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="section-title">Daily Task Progress</div>
+  <div class="progress-grid" id="progressGrid"></div>
+  <div class="section-title">Syllabus Coverage</div>
+  <div class="progress-grid" id="sylProgressGrid"></div>
+  <div class="section-title">All Completed Tasks</div>
+  <div class="task-list" id="doneList"></div>
+  <div class="empty-state" id="emptyDone"><div class="es-icon">🏆</div><p>Complete tasks to see them here!</p></div>
+</div>
+
+<!-- WEEKLY -->
+<div class="page" id="tab-weekly">
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)">← Prev</button>
+    <div class="week-label" id="weekLabel"></div>
+    <button onclick="changeWeek(1)">Next →</button>
+  </div>
+  <div class="week-grid" id="weekGrid"></div>
+</div>
+
+<!-- EXAMS -->
+<div class="page" id="tab-exams">
+  <div id="nextExamBanner"></div>
+  <div class="section-title">All Exams</div>
+  <div class="exam-cards" id="examCards"></div>
+  <div class="exam-tips">
+    <h4>💡 Exam Strategy Tips</h4>
+    <div class="tip-row"><span class="tip-icon">📌</span><span>Teri schedule mein <strong>12 hours/day</strong> study time hai — use it wisely!</span></div>
+    <div class="tip-row"><span class="tip-icon">🔁</span><span>Har subject ke liye Syllabus tab mein topics tick karte jao — kya hua kya nahi clear rahega.</span></div>
+    <div class="tip-row"><span class="tip-icon">⚡</span><span>Exam se 2 din pehle sirf revision karo — naya topic mat uthao.</span></div>
+    <div class="tip-row"><span class="tip-icon">😴</span><span>Exam wale din apni 2–7PM sleep zaroor lo — fresh mind se better performance.</span></div>
+    <div class="tip-row"><span class="tip-icon">✍️</span><span>Previous year questions zaroor solve karo — pattern samjho.</span></div>
+  </div>
+</div>
+
+<script>
+const SYLLABUS = {
+  qm:{name:'Quantum Mechanics II',code:'PH406',cls:'qm',sections:[
+    {t:'Time Independent Perturbation Theory',topics:['Non-degenerate perturbation theory','Quadratic Stark effect','Degenerate perturbation theory','Linear Stark effect','Fine structure of hydrogen','Zeeman effect','Van der Waals interaction']},
+    {t:'Time Dependent Perturbation Theory',topics:['Interaction picture','Two-state problems and resonance','Dyson series','Fermi\'s Golden Rule — constant perturbation','Harmonic perturbation and detailed balance','Electric dipole approximation','Concept of decay width']},
+    {t:'Approximation Methods',topics:['Variational method','WKB approximation']},
+    {t:'Scattering Theory',topics:['Lippmann-Schwinger equation','Differential cross section concept','Born approximation — first order','Higher order Born & validity','Optical Theorem','Method of partial waves and phase shift','Unitarity and hard sphere scattering','Low energy scattering and bound states','Ramsauer-Townsend effect','Resonance scattering']},
+    {t:'Relativistic Quantum Mechanics',topics:['Klein-Gordon equation for free particle','Dirac equation and its solutions','Gamma matrices and their algebra','Concept of spinors','Covariance of Dirac equation','Bilinear covariants']},
+  ]},
+  ed:{name:'Electrodynamics I',code:'PH410',cls:'ed',sections:[
+    {t:'Electrostatics',topics:['Poisson and Laplace equations','Dirichlet and Neumann boundary conditions','Method of images','Laplace equation in Cartesian coordinates','Laplace equation in spherical coordinates','Laplace equation in cylindrical coordinates']},
+    {t:'Green Function Formalism',topics:['Green function for the sphere','Expansion of Green function in spherical coordinates','Multipole expansion','Boundary value problems for dielectrics']},
+    {t:'Magnetostatics',topics:['Vector potential','Magnetic induction for circular current loop','Magnetic materials and boundary value problems','Magnetic shielding','Magnetic field in conductors']},
+    {t:'Electrodynamics',topics:['Maxwell\'s equations','Gauge transformations','Poynting\'s theorem','Energy and momentum conservation']},
+    {t:'Electromagnetic Waves',topics:['Wave equation derivation','Propagation in non-conducting medium','Reflection and refraction at dielectric interface','Total internal reflection','Polarization of waves','Goos-Hänchen shift','Brewster\'s angle','Complex refractive index']},
+  ]},
+  sm:{name:'Statistical Mechanics',code:'PH404',cls:'sm',sections:[
+    {t:'Thermodynamic Potentials',topics:['Internal energy and entropy','Legendre transformation','Enthalpy, Helmholtz & Gibbs free energy','Grand potential','Response functions']},
+    {t:'Theory of Probability',topics:['Binomial, Poisson, Normal distributions','Shannon entropy and H-function','Boltzmann entropy connection']},
+    {t:'Statistical Description',topics:['Microstates and Macrostates','Phase space — classical systems','Quantum state specification','Distinguishable vs indistinguishable particles']},
+    {t:'Microcanonical Ensemble',topics:['Liouville\'s theorem','Ergodic hypothesis & equal a priori probability','Boltzmann entropy, classical ideal gas','Gibbs\' paradox','Density matrix and time evolution','Quantum systems — paramagnet, harmonic oscillator','Negative absolute temperature']},
+    {t:'Canonical Ensemble',topics:['Partition function and statistical averages','Entropy and Helmholtz free energy','Equipartition and virial theorem','Quantum canonical ensemble','Fluctuations in energy']},
+    {t:'Gibbs (NPT) Ensemble',topics:['Partition function and thermodynamics','Stretched polymers and classical ideal gas','Fluctuations in volume and enthalpy']},
+    {t:'Grand Canonical Ensemble',topics:['Partition function and grand potential','Classical ideal gas','Density and energy fluctuations','Grand canonical density operator']},
+    {t:'Quantum Ideal Gases',topics:['Symmetric and anti-symmetric wave functions','Fermions and Bosons','Maxwell-Boltzmann, BE, FD distributions','Partition function for quantum gas','Occupation number distributions']},
+    {t:'Ideal Bose Gas',topics:['Thermodynamics of Bose gas','Bose-Einstein condensation','Blackbody radiation','Lattice vibrations and Debye model']},
+    {t:'Ideal Fermi Gas',topics:['Fermi energy and mean energy at T=0','Heat capacity of degenerate Fermi gas','Pauli paramagnetism']},
+    {t:'Phase Transitions',topics:['General properties of phase transitions','Van der Waals fluid','Critical exponents']},
+  ]},
+  mp:{name:'Mathematical Physics II',code:'PH402',cls:'mp',sections:[
+    {t:'Complex Analysis',topics:['Functions of complex variables','Cauchy-Riemann conditions','Analytic and harmonic functions','Contour integrals','Cauchy-Goursat theorem','Cauchy integral formula','Taylor and Laurent series','Singularities and residue theorem','Applications of residue theorem','Branch cut and complex integrals','Conformal mapping and applications']},
+    {t:'Integral Transformations',topics:['Laplace transformations','Applications to differential equations']},
+    {t:'Group Theory',topics:['Properties of groups','Homomorphism and isomorphism','Subgroups, cosets, conjugacy classes','Invariant subgroups','Symmetry and matrix representation','Unitary representation and conservation laws','Lie groups and algebras — generators','SO(2), SO(3) and SU(2)','Introduction to discrete Abelian groups']},
+  ]},
+  mt:{name:'Measurement Techniques',code:'PH408',cls:'mt',sections:[
+    {t:'Sensors',topics:['Resistive, capacitative, inductive sensors','Electromagnetic and thermoelectric sensors','Elastic and piezoelectric sensors','Piezoresistive, photosensitive, electrochemical sensors','Interfacing sensors and data acquisition']},
+    {t:'Low Pressure Systems',topics:['Rotary, sorption, oil diffusion pumps','Turbo molecular, getter and cryo pumps','McLeod and thermoelectric gauges','Penning, hot cathode, Bayard Alpert gauges','Leak detection and effective pump speed']},
+    {t:'Low Temperature Systems',topics:['Gas liquifiers','Cryo-fluid baths','Liquid He cryostat design','Closed cycle He refrigerator','Low temperature measurement techniques']},
+    {t:'Analytical Instruments',topics:['X-ray diffractometer','Spectrophotometers — UV-Vis-NIR & FTIR','Fluorescence and Raman spectrometer','DSC & DTGA','Lock-in amplifier & PID controller','Spectrum analyzer','ESR & NMR — resonance spectroscopy','Electron microscope','Atomic force microscope']},
+  ]},
+};
+
+const EXAMS = [
+  { id:'mp', date:'2025-05-03', label:'3 May 2025' },
+  { id:'sm', date:'2025-05-04', label:'4 May 2025' },
+  { id:'qm', date:'2025-05-05', label:'5 May 2025' },
+  { id:'ed', date:'2025-05-07', label:'7 May 2025' },
+  { id:'mt', date:'2025-05-08', label:'8 May 2025' },
+];
+
+function daysUntil(dateStr) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const exam  = new Date(dateStr); exam.setHours(0,0,0,0);
+  return Math.round((exam - today) / (1000*60*60*24));
+}
+
+function examStatus(days) {
+  if (days < 0)  return {label:'Done', cls:'done'};
+  if (days === 0) return {label:'TODAY!', cls:'urgent'};
+  if (days <= 2) return {label:'Urgent', cls:'urgent'};
+  if (days <= 5) return {label:'Soon', cls:'soon'};
+  return {label:'On Track', cls:'ok'};
+}
+
+function renderExams() {
+  const upcoming = EXAMS.filter(e => daysUntil(e.date) >= 0);
+  const next = upcoming[0];
+  const banner = document.getElementById('nextExamBanner');
+  if (next) {
+    const sub = SYLLABUS[next.id];
+    const days = daysUntil(next.date);
+    const bgMap = {qm:'linear-gradient(135deg,#5b6abf,#7c84d4)',ed:'linear-gradient(135deg,#c0392b,#e05a4d)',sm:'linear-gradient(135deg,#2d6a4f,#40916c)',mp:'linear-gradient(135deg,#9b59b6,#b980d0)',mt:'linear-gradient(135deg,#e07b39,#f0a060)'};
+    banner.innerHTML = '<div class="next-exam-banner" style="background:'+bgMap[next.id]+'"><div class="neb-left"><div class="neb-label">Next Exam</div><div class="neb-name">'+sub.name+'</div><div class="neb-date">📅 '+next.label+' &nbsp;·&nbsp; '+sub.code+'</div></div><div class="neb-countdown"><div class="neb-days">'+(days===0?'🔥':days)+'</div><div class="neb-days-label">'+(days===0?'TODAY':days===1?'day left':'days left')+'</div></div></div>';
+  } else {
+    banner.innerHTML = '<div class="next-exam-banner" style="background:linear-gradient(135deg,#2d6a4f,#40916c)"><div class="neb-left"><div class="neb-label">All Exams</div><div class="neb-name">Completed! 🎉</div><div class="neb-date">Great work — all done!</div></div></div>';
+  }
+  const bgMap2 = {qm:'var(--qm)',ed:'var(--ed)',sm:'var(--sm)',mp:'var(--mp)',mt:'var(--mt)'};
+  document.getElementById('examCards').innerHTML = EXAMS.map(function(e) {
+    const sub = SYLLABUS[e.id];
+    const days = daysUntil(e.date);
+    const st = examStatus(days);
+    const sr = getSylStats(e.id);
+    const pct = sr.total === 0 ? 0 : Math.round(sr.done/sr.total*100);
+    const daysText = days < 0 ? 'Exam over' : days === 0 ? 'Today!' : days + (days>1?' days':' day')+' left';
+    return '<div class="exam-card"><div class="exam-card-top"><div class="ec-color-bar" style="background:'+bgMap2[e.id]+'"></div><div class="ec-main"><div class="ec-header"><div class="ec-name">'+sub.name+' <span style="font-size:11px;color:var(--text-muted);font-weight:500">('+sub.code+')</span></div><div style="display:flex;gap:7px;align-items:center"><span class="ec-date-chip" style="background:'+bgMap2[e.id]+'">'+e.label+'</span><span class="ec-status '+st.cls+'">'+st.label+'</span></div></div><div class="ec-countdown-row"><div><div class="ec-days-num '+e.id+'-txt">'+(days<0?'✓':days)+'</div><div class="ec-days-txt">'+daysText+'</div></div><div class="ec-progress-wrap"><div class="ec-progress-label"><span class="ec-prog-txt">Syllabus covered</span><span class="ec-prog-pct '+e.id+'-txt">'+pct+'%</span></div><div class="ec-bar-bg"><div class="ec-bar-fill" style="background:'+bgMap2[e.id]+';width:'+pct+'%"></div></div><div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">'+sr.done+'/'+sr.total+' topics done</div></div></div></div></div></div>';
+  }).join('');
+}
+
+const SUBJECTS={
+  qm:{name:'Quantum Mech. II',short:'QM',cls:'qm'},
+  ed:{name:'Electrodynamics I',short:'ED',cls:'ed'},
+  sm:{name:'Stat. Mechanics', short:'SM',cls:'sm'},
+  mp:{name:'Math Physics II', short:'MP',cls:'mp'},
+  mt:{name:'Meas. Techniques',short:'MT',cls:'mt'},
+};
+
+let data=JSON.parse(localStorage.getItem('sp3')||'{"tasks":{},"syl":{}}');
+if(!data.syl)data.syl={};
+function save(){localStorage.setItem('sp3',JSON.stringify(data));}
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function getTasks(k){return data.tasks[k]||[];}
+function setTasks(k,a){data.tasks[k]=a;save();}
+
+function updateHeaderDate(){
+  const d=new Date();
+  document.getElementById('headerDate').innerHTML=`<div>${d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</div><div>${d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>`;
+}
+setInterval(updateHeaderDate,30000);updateHeaderDate();
+
+function showTab(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='progress')renderProgress();
+  if(name==='weekly')renderWeekly();
+  if(name==='exams')renderExams();
+}
+
+// TODAY
+function addTask(){
+  const subject=document.getElementById('taskSubject').value;
+  const slot=document.getElementById('taskSlot').value;
+  const title=document.getElementById('taskTitle').value.trim();
+  const notes=document.getElementById('taskNotes').value.trim();
+  if(!title){document.getElementById('taskTitle').focus();return;}
+  const k=todayKey(),tasks=getTasks(k);
+  tasks.push({id:Date.now(),subject,slot,title,notes,done:false});
+  setTasks(k,tasks);
+  document.getElementById('taskTitle').value='';
+  document.getElementById('taskNotes').value='';
+  renderTodayTasks();
+}
+function renderTodayTasks(){
+  const k=todayKey(),tasks=getTasks(k);
+  const list=document.getElementById('taskList'),empty=document.getElementById('emptyState');
+  if(!tasks.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=tasks.map(t=>`<div class="task-card ${t.done?'done':''}">
+    <div class="task-checkbox ${t.done?'checked':''}" onclick="toggleTask('${k}',${t.id})"></div>
+    <div class="task-body">
+      <div class="task-meta"><span class="subject-tag ${SUBJECTS[t.subject].cls}">${SUBJECTS[t.subject].short}</span><span class="task-time-slot">🕐 ${esc(t.slot)}</span></div>
+      <div class="task-title">${esc(t.title)}</div>
+      ${t.notes?`<div class="task-notes">${esc(t.notes)}</div>`:''}
+    </div>
+    <button class="task-del" onclick="deleteTask('${k}',${t.id})">×</button>
+  </div>`).join('');
+}
+function toggleTask(k,id){const tasks=getTasks(k),t=tasks.find(x=>x.id===id);if(t){t.done=!t.done;setTasks(k,tasks);renderTodayTasks();}}
+function deleteTask(k,id){setTasks(k,getTasks(k).filter(x=>x.id!==id));renderTodayTasks();}
+
+// SYLLABUS
+function sylK(s,si,ti){return `${s}_${si}_${ti}`;}
+function getSylStats(sid){
+  let total=0,done=0;
+  SYLLABUS[sid].sections.forEach((sec,si)=>sec.topics.forEach((_,ti)=>{total++;if(data.syl[sylK(sid,si,ti)])done++;}));
+  return{total,done};
+}
+function toggleTopic(sid,si,ti){const k=sylK(sid,si,ti);data.syl[k]=!data.syl[k];save();renderSyllabus();}
+function toggleBlock(id){document.getElementById(id).classList.toggle('open');}
+
+function renderSyllabus(){
+  let gtotal=0,gdone=0;
+  Object.keys(SYLLABUS).forEach(s=>{const r=getSylStats(s);gtotal+=r.total;gdone+=r.done;});
+  document.getElementById('sylPct').textContent=gtotal===0?'0%':Math.round(gdone/gtotal*100)+'%';
+  document.getElementById('sylSub').textContent=`${gdone} of ${gtotal} topics done`;
+
+  const openSet=new Set([...document.querySelectorAll('.subject-block.open')].map(el=>el.id));
+
+  document.getElementById('sylBlocks').innerHTML=Object.entries(SYLLABUS).map(([sid,sub])=>{
+    const{total,done}=getSylStats(sid);
+    const pct=total===0?0:Math.round(done/total*100);
+    const isOpen=openSet.has('sb-'+sid);
+    const sectionsHtml=sub.sections.map((sec,si)=>`
+      <div class="topic-section">
+        <div class="topic-sec-title">${esc(sec.t)}</div>
+        ${sec.topics.map((topic,ti)=>{
+          const isDone=!!data.syl[sylK(sid,si,ti)];
+          return `<div class="topic-item ${isDone?'done':''}" onclick="toggleTopic('${sid}',${si},${ti})"><div class="topic-cb"></div><div class="topic-text">${esc(topic)}</div></div>`;
+        }).join('')}
+      </div>`).join('');
+    return `<div class="subject-block ${isOpen?'open':''}" id="sb-${sid}">
+      <div class="sb-header" onclick="toggleBlock('sb-${sid}')">
+        <div class="sb-bar ${sub.cls}"></div>
+        <div class="sb-info"><div class="sb-name">${sub.name}</div><div class="sb-code">${sub.code}</div></div>
+        <div class="sb-right"><div class="sb-pct ${sub.cls}-txt">${pct}%</div><div class="sb-frac">${done}/${total} topics</div></div>
+        <span class="sb-chevron">›</span>
+      </div>
+      <div class="sb-progress-bar"><div class="sb-progress-fill ${sub.cls}" style="width:${pct}%"></div></div>
+      <div class="topic-list">${sectionsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+// PROGRESS
+function renderProgress(){
+  const k=todayKey(),tasks=getTasks(k);
+  const total=tasks.length,done=tasks.filter(t=>t.done).length;
+  const pct=total===0?0:Math.round(done/total*100);
+  document.getElementById('overallPct').textContent=pct+'%';
+  document.getElementById('overallSub').textContent=`${done} of ${total} tasks done`;
+  document.getElementById('ringCircle').style.strokeDashoffset=175.9-(175.9*pct/100);
+
+  document.getElementById('progressGrid').innerHTML=Object.entries(SUBJECTS).map(([sk,sub])=>{
+    const all=tasks.filter(t=>t.subject===sk),comp=all.filter(t=>t.done).length;
+    const sp=all.length===0?0:Math.round(comp/all.length*100);
+    return `<div class="progress-card"><div class="pc-header"><span class="pc-name">${sub.name}</span><span class="pc-pct ${sub.cls}-txt">${sp}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${sub.cls}" style="width:${sp}%"></div></div><div class="pc-stats">${comp}/${all.length} tasks today</div></div>`;
+  }).join('');
+
+  document.getElementById('sylProgressGrid').innerHTML=Object.entries(SYLLABUS).map(([sid,sub])=>{
+    const{total:st,done:sd}=getSylStats(sid);
+    const sp=st===0?0:Math.round(sd/st*100);
+    return `<div class="progress-card"><div class="pc-header"><span class="pc-name">${sub.name}</span><span class="pc-pct ${sub.cls}-txt">${sp}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${sub.cls}" style="width:${sp}%"></div></div><div class="pc-stats">${sd}/${st} topics covered</div></div>`;
+  }).join('');
+
+  const allDone=[];
+  Object.entries(data.tasks).forEach(([day,arr])=>arr.filter(t=>t.done).forEach(t=>allDone.push({...t,day})));
+  allDone.sort((a,b)=>b.id-a.id);
+  const doneList=document.getElementById('doneList'),emptyDone=document.getElementById('emptyDone');
+  if(!allDone.length){doneList.innerHTML='';emptyDone.style.display='block';}
+  else{
+    emptyDone.style.display='none';
+    doneList.innerHTML=allDone.slice(0,30).map(t=>`<div class="task-card done"><div class="task-checkbox checked"></div><div class="task-body"><div class="task-meta"><span class="subject-tag ${SUBJECTS[t.subject].cls}">${SUBJECTS[t.subject].short}</span><span class="task-time-slot">${t.day}</span></div><div class="task-title">${esc(t.title)}</div>${t.notes?`<div class="task-notes">${esc(t.notes)}</div>`:''}</div></div>`).join('');
+  }
+}
+
+// WEEKLY
+let weekOffset=0;
+function changeWeek(dir){weekOffset+=dir;renderWeekly();}
+function renderWeekly(){
+  const today=new Date(),dow=today.getDay(),monday=new Date(today);
+  monday.setDate(today.getDate()-((dow+6)%7)+weekOffset*7);
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],todayK=todayKey();
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=new Date(monday);d.setDate(monday.getDate()+i);
+    const dk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const tasks=getTasks(dk),total=tasks.length,done=tasks.filter(t=>t.done).length,isToday=dk===todayK;
+    const subBars=Object.entries(SUBJECTS).map(([sk,sub])=>{
+      const st=tasks.filter(t=>t.subject===sk).length,sd=tasks.filter(t=>t.subject===sk&&t.done).length;
+      return `<div class="week-bar-row"><span class="wb-label">${sub.short}</span><div class="wb-track"><div class="wb-fill ${sub.cls}" style="width:${st===0?0:Math.round(sd/st*100)}%"></div></div></div>`;
+    }).join('');
+    html+=`<div class="week-row ${isToday?'today':''}"><div class="week-day"><div class="wd-name">${days[i]}${isToday?' ★':''}</div><div class="wd-date">${d.getDate()}/${d.getMonth()+1}</div></div><div class="week-bars">${total===0?`<div style="font-size:11px;color:var(--text-muted)">No tasks</div>`:subBars}</div><div class="week-total">${total>0?`${done}/${total}`:'—'}</div></div>`;
+  }
+  const end=new Date(monday);end.setDate(monday.getDate()+6);
+  document.getElementById('weekLabel').textContent=`${monday.getDate()} ${monday.toLocaleString('default',{month:'short'})} – ${end.getDate()} ${end.toLocaleString('default',{month:'short'})}`;
+  document.getElementById('weekGrid').innerHTML=html;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+renderTodayTasks();
+renderSyllabus();
+renderExams();
+</script>
+</body>
+</html>
