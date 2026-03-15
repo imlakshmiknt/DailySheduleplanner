@@ -298,7 +298,74 @@ header h1 span{color:var(--accent2);}
 .pyq-empty{text-align:center;padding:32px 20px;color:var(--text-muted);}
 .pyq-empty .es-icon{font-size:30px;margin-bottom:7px;}
 
-/* ── REVISION ── */
+/* ── BOHR MODEL ── */
+.bohr-wrap{
+  position:relative; width:100%; height:130px;
+  background:linear-gradient(135deg,#0a0a1a 0%,#0d0d2b 50%,#0a0a1a 100%);
+  border-radius:16px; overflow:hidden; margin-bottom:16px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.18);
+}
+#bohrCanvas{ width:100%; height:100%; display:block; }
+.bohr-label{
+  position:absolute; bottom:8px; right:12px;
+  font-size:10px; font-weight:700; letter-spacing:1.5px;
+  color:rgba(255,255,255,0.3); text-transform:uppercase;
+  font-family:'Nunito',sans-serif;
+}
+
+/* ── QUOTE FLOATING CARD ── */
+.quote-fab{
+  position:fixed; bottom:24px; right:20px; z-index:999;
+  width:46px; height:46px; border-radius:50%;
+  background:linear-gradient(135deg,#7c3aed,#5b6abf);
+  color:white; font-size:20px; border:none; cursor:pointer;
+  box-shadow:0 4px 16px rgba(124,58,237,0.4);
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.25s; font-family:'Nunito',sans-serif;
+}
+.quote-fab:hover{transform:scale(1.1);box-shadow:0 6px 22px rgba(124,58,237,0.5);}
+
+.quote-overlay{
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,0.45); backdrop-filter:blur(3px);
+  display:flex; align-items:flex-end; justify-content:center;
+  padding:0 0 90px; opacity:0; pointer-events:none;
+  transition:opacity 0.3s;
+}
+.quote-overlay.show{opacity:1; pointer-events:all;}
+
+.quote-card{
+  background:var(--surface); border-radius:20px 20px 20px 20px;
+  padding:24px 22px 20px; max-width:400px; width:90%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.2);
+  transform:translateY(30px); transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;
+}
+.quote-overlay.show .quote-card{transform:translateY(0);}
+.quote-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.quote-icon{font-size:28px;}
+.quote-close{background:none;border:none;font-size:20px;color:var(--text-muted);cursor:pointer;padding:2px 6px;border-radius:6px;transition:all 0.15s;}
+.quote-close:hover{background:var(--surface2);}
+.quote-text{
+  font-family:'Lora',serif; font-size:16px; font-weight:600;
+  color:var(--text); line-height:1.6; margin-bottom:14px;
+  border-left:3px solid; padding-left:14px;
+}
+.quote-author{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;padding-left:14px;}
+.quote-actions{display:flex;gap:8px;margin-top:18px;}
+.quote-next-btn{
+  flex:1; padding:10px; background:linear-gradient(135deg,#7c3aed,#5b6abf);
+  color:white; border:none; border-radius:10px; font-family:'Nunito',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;
+}
+.quote-next-btn:hover{opacity:0.9;transform:translateY(-1px);}
+.quote-lang-btn{
+  padding:10px 14px; background:var(--surface2); color:var(--text);
+  border:1.5px solid var(--border); border-radius:10px; font-family:'Nunito',sans-serif;
+  font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s;
+}
+.quote-lang-btn:hover{background:var(--border);}
+
 .rev-header-card{background:linear-gradient(135deg,#7c3aed,#9f67f5);color:white;border-radius:14px;padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .rev-header-left .rev-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.8;margin-bottom:4px;}
 .rev-header-left .rev-pct{font-family:'Lora',serif;font-size:36px;font-weight:700;line-height:1;}
@@ -361,6 +428,13 @@ header h1 span{color:var(--accent2);}
 
 <!-- TODAY -->
 <div class="page active" id="tab-today">
+
+  <!-- BOHR MODEL ANIMATION -->
+  <div class="bohr-wrap">
+    <canvas id="bohrCanvas"></canvas>
+    <div class="bohr-label">H — Bohr Model</div>
+  </div>
+
   <div class="schedule-strip">
     <span class="time-chip study">📖 12AM–5AM Study</span>
     <span class="time-chip rest">☕ 5–6AM Rest</span>
@@ -585,6 +659,23 @@ header h1 span{color:var(--accent2);}
   <div class="rev-empty" id="revEmpty" style="display:none">
     <div class="es-icon">📖</div>
     <p>Pehle Syllabus tab mein topics tick karo — woh topics yahan dikhenge!</p>
+  </div>
+</div>
+
+<!-- QUOTE FLOATING CARD -->
+<button class="quote-fab" onclick="openQuote()" title="Quote of the day">✦</button>
+<div class="quote-overlay" id="quoteOverlay" onclick="closeQuoteOverlay(event)">
+  <div class="quote-card">
+    <div class="quote-card-top">
+      <div class="quote-icon" id="quoteIcon">🔬</div>
+      <button class="quote-close" onclick="closeQuote()">×</button>
+    </div>
+    <div class="quote-text" id="quoteText" style="border-color:#7c3aed"></div>
+    <div class="quote-author" id="quoteAuthor"></div>
+    <div class="quote-actions">
+      <button class="quote-next-btn" onclick="nextQuote()">✦ Aur ek quote</button>
+      <button class="quote-lang-btn" id="quoteLangBtn" onclick="toggleQuoteLang()">हिंदी</button>
+    </div>
   </div>
 </div>
 
@@ -840,7 +931,60 @@ function renderWeekly(){
   document.getElementById('weekGrid').innerHTML=html;
 }
 
+// ── QUOTES ──
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+const QUOTES = [
+  { en:"If you think you understand quantum mechanics, you don't understand quantum mechanics.", hi:"अगर तुम सोचते हो कि तुम quantum mechanics समझते हो — तो तुम नहीं समझते।", author:"Richard Feynman", icon:"⚛️", color:"#5b6abf" },
+  { en:"Physics is like sex: sure, it may give some practical results, but that's not why we do it.", hi:"Physics वैसी ही है — नतीजे तो मिलते हैं, पर हम करते इसलिए नहीं हैं।", author:"Richard Feynman", icon:"🔬", color:"#5b6abf" },
+  { en:"The most incomprehensible thing about the universe is that it is comprehensible.", hi:"ब्रह्मांड की सबसे हैरतअंगेज़ बात यह है कि उसे समझा जा सकता है।", author:"Albert Einstein", icon:"🌌", color:"#e07b39" },
+  { en:"Not only is the universe stranger than we think, it is stranger than we can think.", hi:"ब्रह्मांड सिर्फ हमारी सोच से अजीब नहीं है — वो हमारी सोच की क्षमता से भी परे है।", author:"Werner Heisenberg", icon:"🎯", color:"#2d6a4f" },
+  { en:"An expert is a person who has made all the mistakes that can be made in a very narrow field.", hi:"विशेषज्ञ वो होता है जिसने एक छोटे से क्षेत्र में सारी गलतियाँ कर ली हों।", author:"Niels Bohr", icon:"💡", color:"#c0392b" },
+  { en:"In physics, you don't have to go around making trouble for yourself — nature does it for you.", hi:"Physics में खुद मुसीबत ढूंढने की ज़रूरत नहीं — प्रकृति खुद ही कर देती है।", author:"Frank Wilczek", icon:"🌀", color:"#9b59b6" },
+  { en:"Study hard what interests you the most in the most undisciplined, irreverent and original manner possible.", hi:"जो सबसे ज़्यादा रोचक लगे उसे पूरी बेफ़िक्री और मौलिकता से पढ़ो।", author:"Richard Feynman", icon:"📚", color:"#5b6abf" },
+  { en:"The energy of the mind is the essence of life.", hi:"मन की ऊर्जा ही जीवन का सार है।", author:"Aristotle", icon:"⚡", color:"#e07b39" },
+  { en:"Statistical mechanics is the art of taking shortcuts through an impossibly complex universe.", hi:"Statistical mechanics असंभव रूप से जटिल ब्रह्मांड में शॉर्टकट निकालने की कला है।", author:"Anonymous Physicist", icon:"📊", color:"#2d6a4f" },
+  { en:"Dirac was the strangest man who ever visited our Institute.", hi:"Dirac हमारे संस्थान में आए अब तक के सबसे अजीब इंसान थे।", author:"Niels Bohr", icon:"🎩", color:"#c0392b" },
+  { en:"The more I learn, the more I realize how much I don't know.", hi:"जितना ज़्यादा सीखता हूँ, उतना ज़्यादा एहसास होता है कि कितना कम जानता हूँ।", author:"Albert Einstein", icon:"🧠", color:"#9b59b6" },
+  { en:"Nature uses only the longest threads to weave her patterns, so each small piece of her fabric reveals the organization of the entire tapestry.", hi:"प्रकृति सबसे लंबे धागों से बुनती है — हर छोटे टुकड़े में पूरी कारीगरी दिखती है।", author:"Richard Feynman", icon:"🕸️", color:"#5b6abf" },
+  { en:"Exam preparation is not about cramming — it is about making the knowledge your own.", hi:"Exam की तैयारी रटने से नहीं — ज्ञान को अपना बनाने से होती है।", author:"Unknown", icon:"✍️", color:"#2d6a4f" },
+  { en:"Every expert was once a beginner. Every pro was once an amateur.", hi:"हर माहिर कभी शुरुआत करने वाला था। हर pro कभी amateur था।", author:"Unknown", icon:"🌱", color:"#e07b39" },
+  { en:"The beautiful thing about learning is that no one can take it away from you.", hi:"सीखने की खूबसूरती यह है कि इसे कोई छीन नहीं सकता।", author:"B.B. King", icon:"🎓", color:"#9b59b6" },
+  { en:"Maxwell's equations are the most elegant equations in all of physics.", hi:"Maxwell के equations physics के सबसे सुंदर समीकरण हैं।", author:"Richard Feynman", icon:"⚡", color:"#c0392b" },
+  { en:"Thermodynamics is a funny subject. The first time you go through it, you don't understand it at all.", hi:"Thermodynamics अजीब विषय है — पहली बार पढ़ो तो कुछ समझ नहीं आता।", author:"Arnold Sommerfeld", icon:"🌡️", color:"#e07b39" },
+  { en:"Hard work beats talent when talent doesn't work hard.", hi:"मेहनत तब प्रतिभा को हरा देती है जब प्रतिभा मेहनत न करे।", author:"Tim Notke", icon:"💪", color:"#2d6a4f" },
+  { en:"Your exam is not your enemy — your procrastination is.", hi:"तुम्हारा दुश्मन exam नहीं है — टालना है।", author:"Study Wisdom", icon:"⏰", color:"#c0392b" },
+  { en:"Do not worry about your difficulties in mathematics. I can assure you mine are still greater.", hi:"Mathematics में अपनी मुश्किलों की चिंता मत करो — मेरी हमेशा ज़्यादा थीं।", author:"Albert Einstein", icon:"➕", color:"#5b6abf" },
+];
+
+let quoteIndex = Math.floor(Math.random() * QUOTES.length);
+let quoteLang = 'en';
+
+function openQuote(){
+  showQuote();
+  document.getElementById('quoteOverlay').classList.add('show');
+}
+function closeQuote(){ document.getElementById('quoteOverlay').classList.remove('show'); }
+function closeQuoteOverlay(e){ if(e.target===document.getElementById('quoteOverlay')) closeQuote(); }
+
+function showQuote(){
+  const q = QUOTES[quoteIndex];
+  document.getElementById('quoteIcon').textContent = q.icon;
+  document.getElementById('quoteText').textContent = quoteLang==='en' ? q.en : q.hi;
+  document.getElementById('quoteText').style.borderColor = q.color;
+  document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+  document.getElementById('quoteLangBtn').textContent = quoteLang==='en' ? 'हिंदी' : 'English';
+}
+
+function nextQuote(){
+  quoteIndex = (quoteIndex + 1) % QUOTES.length;
+  showQuote();
+}
+
+function toggleQuoteLang(){
+  quoteLang = quoteLang==='en' ? 'hi' : 'en';
+  showQuote();
+}
+
 
 // ── PYQ ──
 let pyqFilter = 'all';
@@ -1154,6 +1298,134 @@ renderExams();
 renderCalendar();
 renderPYQ();
 renderRevision();
+
+// ── BOHR MODEL ANIMATION ──
+(function(){
+  const canvas = document.getElementById('bohrCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize(){
+    const wrap = canvas.parentElement;
+    canvas.width  = wrap.offsetWidth  * (window.devicePixelRatio||1);
+    canvas.height = wrap.offsetHeight * (window.devicePixelRatio||1);
+    ctx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+  }
+  resize();
+  window.addEventListener('resize', ()=>{ ctx.setTransform(1,0,0,1,0,0); resize(); });
+
+  const W = ()=> canvas.parentElement.offsetWidth;
+  const H = ()=> canvas.parentElement.offsetHeight;
+
+  const orbits = [
+    { r:22, speed:0.025, angle:0,        color:'#60a5fa', n:1 },
+    { r:40, speed:0.014, angle:Math.PI,  color:'#a78bfa', n:2 },
+    { r:58, speed:0.009, angle:1.0,      color:'#34d399', n:1 },
+  ];
+
+  const particles = Array.from({length:20},()=>({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*1.3+0.3,
+    vx:(Math.random()-0.5)*0.2,
+    vy:(Math.random()-0.5)*0.2,
+    a:Math.random()*0.35+0.08,
+  }));
+
+  let t=0;
+
+  function frame(){
+    const w=W(), h=H();
+    ctx.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2;
+    t++;
+
+    // Stars
+    particles.forEach(p=>{
+      p.x+=p.vx/w; p.y+=p.vy/h;
+      if(p.x<0)p.x=1; if(p.x>1)p.x=0;
+      if(p.y<0)p.y=1; if(p.y>1)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x*w, p.y*h, p.r, 0, Math.PI*2);
+      ctx.fillStyle='rgba(150,170,255,'+p.a+')';
+      ctx.fill();
+    });
+
+    // Orbit rings
+    orbits.forEach(orb=>{
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, orb.r, orb.r*0.35, -0.25, 0, Math.PI*2);
+      ctx.strokeStyle = orb.color+'44';
+      ctx.lineWidth=1; ctx.setLineDash([2,4]); ctx.stroke(); ctx.setLineDash([]);
+    });
+
+    // Nucleus glow
+    const ng=ctx.createRadialGradient(cx,cy,0,cx,cy,28);
+    ng.addColorStop(0,'rgba(251,191,36,0.85)');
+    ng.addColorStop(0.45,'rgba(251,146,60,0.4)');
+    ng.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=ng;
+    ctx.beginPath(); ctx.arc(cx,cy,28,0,Math.PI*2); ctx.fill();
+
+    // Nucleus
+    ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2);
+    ctx.fillStyle='#fbbf24'; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx-2.5,cy-2.5,3.5,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.65)';
+    ctx.font='bold 6px Nunito,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('p⁺',cx,cy+1);
+
+    // Electrons
+    orbits.forEach(orb=>{
+      orb.angle += orb.speed;
+      for(let e=0;e<orb.n;e++){
+        const a = orb.angle + e*(Math.PI*2/orb.n);
+        const ex = cx + orb.r*Math.cos(a);
+        const ey = cy + orb.r*0.35*Math.sin(a);
+
+        // Glow
+        const eg=ctx.createRadialGradient(ex,ey,0,ex,ey,9);
+        eg.addColorStop(0,orb.color+'bb');
+        eg.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle=eg;
+        ctx.beginPath(); ctx.arc(ex,ey,9,0,Math.PI*2); ctx.fill();
+
+        // Dot
+        ctx.beginPath(); ctx.arc(ex,ey,3.2,0,Math.PI*2);
+        ctx.fillStyle=orb.color; ctx.fill();
+        ctx.beginPath(); ctx.arc(ex-0.9,ey-0.9,1.1,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.fill();
+
+        // Ripple on emission
+        const phase = t % 150;
+        if(phase < 10 && orbits.indexOf(orb)===1){
+          ctx.beginPath();
+          ctx.arc(ex,ey,3.2+phase*0.9,0,Math.PI*2);
+          ctx.strokeStyle=orb.color+Math.floor((1-phase/10)*255).toString(16).padStart(2,'0');
+          ctx.lineWidth=1; ctx.stroke();
+        }
+      }
+    });
+
+    // Photon particle
+    const ph = t%150;
+    if(ph < 20){
+      const prog = ph/20;
+      const ox = cx + orbits[1].r*Math.cos(orbits[1].angle);
+      const oy = cy + orbits[1].r*0.35*Math.sin(orbits[1].angle);
+      const tx2 = cx + orbits[0].r*Math.cos(orbits[0].angle);
+      const ty2 = cy + orbits[0].r*0.35*Math.sin(orbits[0].angle);
+      const px2 = ox + (tx2-ox)*prog;
+      const py2 = oy + (ty2-oy)*prog;
+      ctx.beginPath(); ctx.arc(px2,py2,2.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(253,224,71,${0.9*(1-prog)})`; ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
 </script>
 </body>
 </html>
